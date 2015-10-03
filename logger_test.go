@@ -56,3 +56,29 @@ func checkFunc(t *testing.T, expectl LogLevel, expectmsg string, counter *int) f
 		}
 	}
 }
+
+func TestFacilityDebugging(t *testing.T) {
+	l := New()
+	l.SetFlags(0)
+
+	msgs := 0
+	l.AddHandler(LevelDebug, func(l LogLevel, msg string) {
+		msgs++
+		if strings.Contains(msg, "f1") {
+			t.Fatal("Should not get message for facility f1")
+		}
+	})
+
+	l.SetDebug("f0", true)
+	l.SetDebug("f1", false)
+
+	f0 := l.NewFacility("f0")
+	f1 := l.NewFacility("f1")
+
+	f0.Debugln("Debug line from f0")
+	f1.Debugln("Debug line from f1")
+
+	if msgs != 1 {
+		t.Fatalf("Incorrent number of messages, %d != 1", msgs)
+	}
+}
