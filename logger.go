@@ -92,8 +92,10 @@ func (l *logger) SetPrefix(prefix string) {
 }
 
 func (l *logger) callHandlers(level LogLevel, s string) {
-	for _, h := range l.handlers[level] {
-		h(level, strings.TrimSpace(s))
+	for ll := LevelDebug; ll <= level; ll++ {
+		for _, h := range l.handlers[ll] {
+			h(level, strings.TrimSpace(s))
+		}
 	}
 }
 
